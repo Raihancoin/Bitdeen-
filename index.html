@@ -1,1 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BitDeen - Home</title>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+  <style>
+    body { margin: 0; font-family: 'Segoe UI', sans-serif; background: #fffbe7; padding-bottom: 90px; text-align: center; }
+    header { background: linear-gradient(135deg, #ffd700, #ffb300); padding: 15px; font-size: 22px; font-weight: bold; color: #333; border-bottom-left-radius: 15px; border-bottom-right-radius: 15px; }
+    .balance span { display: block; margin: 5px 0; font-size: 16px; }
+    .main-area { padding: 20px; }
+    .gift-btn, .watch-btn {
+      width: 80%; padding: 15px; margin: 10px 0; border: none;
+      border-radius: 30px; font-size: 18px; color: white; font-weight: bold; cursor: pointer;
+    }
+    .gift-btn { background: #ff9800; }
+    .watch-btn { background: #2196f3; }
+    .progress-bar { margin-top: 15px; width: 80%; height: 16px; background: #ddd; border-radius: 20px; overflow: hidden; margin-left: auto; margin-right: auto; }
+    .progress { height: 100%; width: 0%; background: green; transition: width 0.3s; }
+    .level { font-size: 16px; margin-top: 10px; }
+    nav { position: fixed; bottom: 0; width: 100%; background: #ffd700; display: flex; justify-content: space-around; padding: 12px 0; }
+    nav a { color: #000; font-size: 14px; text-decoration: none; font-weight: bold; text-align: center; }
+    nav a span { display: block; font-size: 22px; }
+  </style>
+</head>
+<body>
 
+<header>
+  BitDeen
+  <div class="balance">
+    <span>🪙 BDN: <strong id="bdn">0</strong></span>
+    <span>💵 USDT: <strong id="usdt">0.00</strong></span>
+  </div>
+</header>
+
+<div class="main-area">
+  <button class="gift-btn" onclick="openGift()">🎁 Open Gift</button>
+  <button class="watch-btn" onclick="watchAd()">📺 Watch Ad</button>
+
+  <div class="progress-bar">
+    <div class="progress" id="progress-bar"></div>
+  </div>
+  <div class="level">Level: <span id="level">1</span> | Ads: <span id="ads">0</span></div>
+</div>
+
+<nav>
+  <a href="index.html"><span>🏠</span>Home</a>
+  <a href="tasks.html"><span>📝</span>Tasks</a>
+  <a href="withdraw.html"><span>💸</span>Withdraw</a>
+  <a href="referral.html"><span>🔗</span>Referral</a>
+  <a href="profile.html"><span>👤</span>Profile</a>
+</nav>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyA-EXAMPLE-NcVmz2",
+    authDomain: "deencoin-project.firebaseapp.com",
+    projectId: "deencoin-project",
+    storageBucket: "deencoin-project.appspot.com",
+    messagingSenderId: "1234567890",
+    appId: "1:1234567890:web:abc123xyz789"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+
+  const userId = localStorage.getItem("bitdeen_phone") || "user_demo";
+
+  let bdn = 0, usdt = 0.00, level = 1, adsWatched = 0;
+
+  const adLinks = [
+    "https://www.youtube.com/embed/DXUAyRRkI6k",
+    "https://www.youtube.com/embed/aqz-KE-bpKQ",
+    "https://www.youtube.com/embed/e-ORhEE9VVg"
+  ];
+
+  function updateDisplay() {
+    document.getElementById('bdn').innerText = bdn;
+    document.getElementById('usdt').innerText = usdt.toFixed(2);
+    document.getElementById('level').innerText = level;
+    document.getElementById('ads').innerText = adsWatched;
+
+    const maxAds = level * 10;
+    const percent = Math.min(100, (adsWatched / maxAds) * 100);
+    document.getElementById('progress-bar').style.width = percent + '%';
+  }
+
+  function saveToFirebase() {
+    db.ref("users/" + userId + "/progress").set({ bdn, usdt, level, adsWatched });
+  }
+
+  function watchAd() {
+    const maxAds = level * 10;
+    if (adsWatched >= maxAds) {
+      alert("❗ You've reached the ad limit. Open gift box.");
+      return;
+    }
+
+    const adUrl = adLinks[Math.floor(Math.random() * adLinks.length)];
+    const adWindow = window.open(adUrl, "_blank");
+
+    setTimeout(() => {
+      if (!adWindow.closed) {
+        adWindow.close();
+        adsWatched++;
+        bdn += 10;
+        alert("✅ You watched the ad and earned 10 BDN!");
+        updateDisplay();
+        saveToFirebase();
+      } else {
+        alert("❗ You closed the ad too early. No reward.");
+      }
+    }, 30000); // 30 seconds
+  }
+
+  function openGift() {
+    const requiredAds = level * 10;
+    if (adsWatched >= requiredAds) {
+      const reward = level * 0.10;
+      usdt += reward;
+      alert(`🎉 Gift Opened! You earned $${reward.toFixed(2)} USDT`);
+      level++;
+      adsWatched = 0;
+      updateDisplay();
+      saveToFirebase();
+    } else {
+      alert(`❌ Watch ${requiredAds - adsWatched} more ads to open gift.`);
+    }
+  }
+
+  function loadUserData() {
+    db.ref("users/" + userId + "/progress").once("value").then(snapshot => {
+      if (snapshot.exists()) {
+        const data = snapshot.val();
+        bdn = data.bdn || 0;
+        usdt = data.usdt || 0.0;
+        level = data.level || 1;
+        adsWatched = data.adsWatched || 0;
+      }
+      updateDisplay();
+    });
+  }
+
+  loadUserData();
+</script>
+
+</body>
+    </html>
+  
