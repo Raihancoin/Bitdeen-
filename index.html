@@ -17,9 +17,21 @@
     }
     .gift-btn { background: #ff9800; }
     .watch-btn { background: #2196f3; }
-    .progress-bar { margin-top: 15px; width: 80%; height: 16px; background: #ddd; border-radius: 20px; overflow: hidden; margin-left: auto; margin-right: auto; }
+    .progress-bar { margin: 20px auto; width: 80%; height: 16px; background: #ddd; border-radius: 20px; overflow: hidden; }
     .progress { height: 100%; width: 0%; background: green; transition: width 0.3s; }
     .level { font-size: 16px; margin-top: 10px; }
+    .bonus-box {
+      margin-top: 25px;
+      background: #fff3cd;
+      color: #856404;
+      border: 1px solid #ffeeba;
+      border-radius: 10px;
+      padding: 15px;
+      width: 80%;
+      margin-left: auto;
+      margin-right: auto;
+      font-size: 16px;
+    }
     nav { position: fixed; bottom: 0; width: 100%; background: #ffd700; display: flex; justify-content: space-around; padding: 12px 0; }
     nav a { color: #000; font-size: 14px; text-decoration: none; font-weight: bold; text-align: center; }
     nav a span { display: block; font-size: 22px; }
@@ -37,12 +49,18 @@
 
 <div class="main-area">
   <button class="gift-btn" onclick="openGift()">🎁 Open Gift</button>
-  <button class="watch-btn" onclick="watchAd()">📺 Watch Ad</button>
 
   <div class="progress-bar">
     <div class="progress" id="progress-bar"></div>
   </div>
   <div class="level">Level: <span id="level">1</span> | Ads: <span id="ads">0</span></div>
+
+  <button class="watch-btn" onclick="watchAd()">📺 Watch Ad</button>
+
+  <div class="bonus-box">
+    ⏳ Daily Bonus Available in: <span id="bonus-timer">--:--</span><br>
+    Come back every 24h and claim 100 BDN!
+  </div>
 </div>
 
 <nav>
@@ -65,15 +83,13 @@
 
   firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
-
   const userId = localStorage.getItem("bitdeen_phone") || "user_demo";
 
-  let bdn = 0, usdt = 0.00, level = 1, adsWatched = 0;
+  let bdn = 0, usdt = 0.00, level = 1, adsWatched = 0, lastBonus = 0;
 
   const adLinks = [
     "https://www.youtube.com/embed/DXUAyRRkI6k",
-    "https://www.youtube.com/embed/aqz-KE-bpKQ",
-    "https://www.youtube.com/embed/e-ORhEE9VVg"
+    "https://www.youtube.com/embed/aqz-KE-bpKQ"
   ];
 
   function updateDisplay() {
@@ -81,52 +97,55 @@
     document.getElementById('usdt').innerText = usdt.toFixed(2);
     document.getElementById('level').innerText = level;
     document.getElementById('ads').innerText = adsWatched;
-
-    const maxAds = level * 10;
-    const percent = Math.min(100, (adsWatched / maxAds) * 100);
+    const percent = Math.min(100, (adsWatched / (level * 10)) * 100);
     document.getElementById('progress-bar').style.width = percent + '%';
   }
 
   function saveToFirebase() {
-    db.ref("users/" + userId + "/progress").set({ bdn, usdt, level, adsWatched });
+    db.ref("users/" + userId + "/progress").set({ bdn, usdt, level, adsWatched, lastBonus });
   }
 
   function watchAd() {
     const maxAds = level * 10;
-    if (adsWatched >= maxAds) {
-      alert("❗ You've reached the ad limit. Open gift box.");
-      return;
-    }
-
+    if (adsWatched >= maxAds) return alert("❗ Limit reached. Open gift box.");
     const adUrl = adLinks[Math.floor(Math.random() * adLinks.length)];
     const adWindow = window.open(adUrl, "_blank");
 
     setTimeout(() => {
       if (!adWindow.closed) {
         adWindow.close();
-        adsWatched++;
-        bdn += 10;
-        alert("✅ You watched the ad and earned 10 BDN!");
-        updateDisplay();
-        saveToFirebase();
-      } else {
-        alert("❗ You closed the ad too early. No reward.");
-      }
-    }, 30000); // 30 seconds
+        adsWatched++; bdn += 10;
+        alert("✅ Ad watched! 10 BDN added.");
+        updateDisplay(); saveToFirebase();
+      } else alert("❌ You closed the ad early.");
+    }, 30000);
   }
 
   function openGift() {
-    const requiredAds = level * 10;
-    if (adsWatched >= requiredAds) {
+    const required = level * 10;
+    if (adsWatched >= required) {
       const reward = level * 0.10;
-      usdt += reward;
-      alert(`🎉 Gift Opened! You earned $${reward.toFixed(2)} USDT`);
-      level++;
-      adsWatched = 0;
-      updateDisplay();
-      saveToFirebase();
+      usdt += reward; level++; adsWatched = 0;
+      alert(`🎁 Gift opened! You got $${reward.toFixed(2)} USDT`);
+      updateDisplay(); saveToFirebase();
+    } else alert(`❌ Watch ${required - adsWatched} more ads.`);
+  }
+
+  function updateBonusTimer() {
+    const now = Date.now();
+    const diff = 86400000 - (now - lastBonus);
+    if (diff <= 0) {
+      document.getElementById("bonus-timer").innerText = "Ready!";
+      if (confirm("🎉 Claim your Daily Bonus of 100 BDN?")) {
+        bdn += 100;
+        lastBonus = now;
+        updateDisplay();
+        saveToFirebase();
+      }
     } else {
-      alert(`❌ Watch ${requiredAds - adsWatched} more ads to open gift.`);
+      const hours = Math.floor(diff / 3600000);
+      const minutes = Math.floor((diff % 3600000) / 60000);
+      document.getElementById("bonus-timer").innerText = `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`;
     }
   }
 
@@ -135,11 +154,14 @@
       if (snapshot.exists()) {
         const data = snapshot.val();
         bdn = data.bdn || 0;
-        usdt = data.usdt || 0.0;
+        usdt = data.usdt || 0;
         level = data.level || 1;
         adsWatched = data.adsWatched || 0;
+        lastBonus = data.lastBonus || 0;
+        updateDisplay();
       }
-      updateDisplay();
+      updateBonusTimer();
+      setInterval(updateBonusTimer, 60000);
     });
   }
 
@@ -147,5 +169,5 @@
 </script>
 
 </body>
-    </html>
+  </html>
   
