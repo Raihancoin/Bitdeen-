@@ -3,171 +3,269 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>BitDeen - Home</title>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+  <title>BitDeen</title>
   <style>
-    body { margin: 0; font-family: 'Segoe UI', sans-serif; background: #fffbe7; padding-bottom: 90px; text-align: center; }
-    header { background: linear-gradient(135deg, #ffd700, #ffb300); padding: 15px; font-size: 22px; font-weight: bold; color: #333; border-bottom-left-radius: 15px; border-bottom-right-radius: 15px; }
-    .balance span { display: block; margin: 5px 0; font-size: 16px; }
-    .main-area { padding: 20px; }
-    .gift-btn, .watch-btn {
-      width: 80%; padding: 15px; margin: 10px 0; border: none;
-      border-radius: 30px; font-size: 18px; color: white; font-weight: bold; cursor: pointer;
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #0f1318;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
     }
-    .gift-btn { background: #ff9800; }
-    .watch-btn { background: #2196f3; }
-    .progress-bar { margin: 20px auto; width: 80%; height: 16px; background: #ddd; border-radius: 20px; overflow: hidden; }
-    .progress { height: 100%; width: 0%; background: green; transition: width 0.3s; }
-    .level { font-size: 16px; margin-top: 10px; }
-    .bonus-box {
-      margin-top: 25px;
-      background: #fff3cd;
-      color: #856404;
-      border: 1px solid #ffeeba;
+    .top {
+      background: #161d25;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .profile {
+      display: flex;
+      align-items: center;
+    }
+    .profile img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 2px solid #00d2ff;
+      margin-right: 10px;
+    }
+    .balance {
+      background: #00ffc8;
+      padding: 8px 15px;
       border-radius: 10px;
-      padding: 15px;
-      width: 80%;
-      margin-left: auto;
-      margin-right: auto;
-      font-size: 16px;
+      color: #000;
+      font-weight: bold;
     }
-    nav { position: fixed; bottom: 0; width: 100%; background: #ffd700; display: flex; justify-content: space-around; padding: 12px 0; }
-    nav a { color: #000; font-size: 14px; text-decoration: none; font-weight: bold; text-align: center; }
-    nav a span { display: block; font-size: 22px; }
+    .middle {
+      text-align: center;
+      flex: 1;
+      padding: 20px 10px 0;
+      position: relative;
+    }
+    .floating-ad {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #ffe600;
+      color: #000;
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: bold;
+      animation: fadeOut 15s forwards;
+      z-index: 10;
+    }
+    @keyframes fadeOut {
+      0% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { opacity: 0; display: none; }
+    }
+    .level {
+      font-size: 1rem;
+      font-weight: bold;
+      color: #00ffc8;
+      margin-bottom: 12px;
+    }
+    .logo {
+      width: 120px;
+      height: 120px;
+      margin: 20px auto 10px;
+      border-radius: 50%;
+      overflow: hidden;
+      box-shadow: 0 0 30px #00d2ff;
+    }
+    .logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+    .claim-btn {
+      width: 85%;
+      background: #00ffc8;
+      color: #000;
+      font-size: 1rem;
+      padding: 10px;
+      border: none;
+      border-radius: 12px;
+      font-weight: bold;
+      box-shadow: 0 0 8px #00ffc8;
+      margin: 40px auto;
+    }
+    .boost-buttons {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 8px;
+    }
+    .boost-btn {
+      flex: 1;
+      max-width: 140px;
+      background: #ffd700;
+      color: #000;
+      padding: 10px;
+      border-radius: 10px;
+      font-weight: bold;
+      border: none;
+      font-size: 0.9rem;
+      box-shadow: 0 0 6px #ffd700;
+    }
+    .boost-info {
+      font-size: 0.8rem;
+      color: #ccc;
+      margin-top: 10px;
+    }
+    .bottom {
+      margin-top: 20px;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      background: #161d25;
+      padding: 10px 0;
+      border-radius: 15px 15px 0 0;
+    }
+    .nav-btn {
+      text-align: center;
+      color: #ddd;
+      font-size: 0.8rem;
+    }
+    .nav-btn span {
+      font-size: 1.2rem;
+      display: block;
+      margin-bottom: 2px;
+    }
   </style>
 </head>
 <body>
-
-<header>
-  BitDeen
-  <div class="balance">
-    <span>🪙 BDN: <strong id="bdn">0</strong></span>
-    <span>💵 USDT: <strong id="usdt">0.00</strong></span>
+  <div class="top">
+    <div class="profile">
+      <img src="https://i.ibb.co/gMDGSYkQ/Elegant-Bit-Deen-Cryptocurrency-Logo.png" />
+      <div><strong>User</strong><br />ID: BDN123</div>
+    </div>
+    <div class="balance"><span id="balance">0</span> BDN</div>
   </div>
-</header>
-
-<div class="main-area">
-  <button class="gift-btn" onclick="openGift()">🎁 Open Gift</button>
-
-  <div class="progress-bar">
-    <div class="progress" id="progress-bar"></div>
+  <div class="middle">
+    <div class="floating-ad">📢 Ad Running... Please Wait</div>
+    <div class="level" id="levelStatus">🏆 Level: 0 | 💵 $0</div>
+    <div class="logo">
+      <img src="https://i.ibb.co/gMDGSYkQ/Elegant-Bit-Deen-Cryptocurrency-Logo.png" />
+    </div>
+    <button class="claim-btn" id="claimBtn">⛏️ Claim 100 BDN</button>
+    <div class="boost-buttons">
+      <button class="boost-btn" onclick="boost('token')">🪙 Token Boost</button>
+      <button class="boost-btn" onclick="boost('time')">⏱ Time Boost</button>
+    </div>
+    <div class="boost-info" id="boostInfo"></div>
   </div>
-  <div class="level">Level: <span id="level">1</span> | Ads: <span id="ads">0</span></div>
-
-  <button class="watch-btn" onclick="watchAd()">📺 Watch Ad</button>
-
-  <div class="bonus-box">
-    ⏳ Daily Bonus Available in: <span id="bonus-timer">--:--</span><br>
-    Come back every 24h and claim 100 BDN!
+  <div class="bottom">
+    <div class="nav-btn"><span>🏠</span>Home</div>
+    <div class="nav-btn"><span>📋</span>Task</div>
+    <div class="nav-btn"><span>💸</span>Withdraw</div>
+    <div class="nav-btn"><span>👥</span>Refer</div>
   </div>
-</div>
 
-<nav>
-  <a href="index.html"><span>🏠</span>Home</a>
-  <a href="tasks.html"><span>📝</span>Tasks</a>
-  <a href="withdraw.html"><span>💸</span>Withdraw</a>
-  <a href="referral.html"><span>🔗</span>Referral</a>
-  <a href="profile.html"><span>👤</span>Profile</a>
-</nav>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-<script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyA-EXAMPLE-NcVmz2",
-    authDomain: "deencoin-project.firebaseapp.com",
-    projectId: "deencoin-project",
-    storageBucket: "deencoin-project.appspot.com",
-    messagingSenderId: "1234567890",
-    appId: "1:1234567890:web:abc123xyz789"
-  };
+    const firebaseConfig = {
+      apiKey: "AIzaSyBxQ4EiH_aTCyJm5_VT0cRSDD97F_ObG1o",
+      authDomain: "bitdeen-a1ebe.firebaseapp.com",
+      databaseURL: "https://bitdeen-a1ebe-default-rtdb.firebaseio.com",
+      projectId: "bitdeen-a1ebe",
+      storageBucket: "bitdeen-a1ebe.appspot.com",
+      messagingSenderId: "957332775205",
+      appId: "1:957332775205:web:e34cc38d4d5282adc43acc"
+    };
 
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.database();
-  const userId = localStorage.getItem("bitdeen_phone") || "user_demo";
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const userId = "BDN123";
 
-  let bdn = 0, usdt = 0.00, level = 1, adsWatched = 0, lastBonus = 0;
+    let balance = 0, lastClaim = 0, tokenBoost = 0, timeBoost = 0, level = 0, dollar = 0;
+    let adsSeen = { token: 0, time: 0 };
 
-  const adLinks = [
-    "https://www.youtube.com/embed/DXUAyRRkI6k",
-    "https://www.youtube.com/embed/aqz-KE-bpKQ"
-  ];
+    const balanceEl = document.getElementById("balance");
+    const boostInfo = document.getElementById("boostInfo");
+    const levelStatus = document.getElementById("levelStatus");
 
-  function updateDisplay() {
-    document.getElementById('bdn').innerText = bdn;
-    document.getElementById('usdt').innerText = usdt.toFixed(2);
-    document.getElementById('level').innerText = level;
-    document.getElementById('ads').innerText = adsWatched;
-    const percent = Math.min(100, (adsWatched / (level * 10)) * 100);
-    document.getElementById('progress-bar').style.width = percent + '%';
-  }
-
-  function saveToFirebase() {
-    db.ref("users/" + userId + "/progress").set({ bdn, usdt, level, adsWatched, lastBonus });
-  }
-
-  function watchAd() {
-    const maxAds = level * 10;
-    if (adsWatched >= maxAds) return alert("❗ Limit reached. Open gift box.");
-    const adUrl = adLinks[Math.floor(Math.random() * adLinks.length)];
-    const adWindow = window.open(adUrl, "_blank");
-
-    setTimeout(() => {
-      if (!adWindow.closed) {
-        adWindow.close();
-        adsWatched++; bdn += 10;
-        alert("✅ Ad watched! 10 BDN added.");
-        updateDisplay(); saveToFirebase();
-      } else alert("❌ You closed the ad early.");
-    }, 30000);
-  }
-
-  function openGift() {
-    const required = level * 10;
-    if (adsWatched >= required) {
-      const reward = level * 0.10;
-      usdt += reward; level++; adsWatched = 0;
-      alert(`🎁 Gift opened! You got $${reward.toFixed(2)} USDT`);
-      updateDisplay(); saveToFirebase();
-    } else alert(`❌ Watch ${required - adsWatched} more ads.`);
-  }
-
-  function updateBonusTimer() {
-    const now = Date.now();
-    const diff = 86400000 - (now - lastBonus);
-    if (diff <= 0) {
-      document.getElementById("bonus-timer").innerText = "Ready!";
-      if (confirm("🎉 Claim your Daily Bonus of 100 BDN?")) {
-        bdn += 100;
-        lastBonus = now;
-        updateDisplay();
-        saveToFirebase();
-      }
-    } else {
-      const hours = Math.floor(diff / 3600000);
-      const minutes = Math.floor((diff % 3600000) / 60000);
-      document.getElementById("bonus-timer").innerText = `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`;
+    function updateUI() {
+      balanceEl.textContent = balance;
+      boostInfo.innerHTML = `🪙 Token Boost: ${tokenBoost} | ⏱ Time Boost: ${timeBoost} min<br/>Ads Seen — Token: ${adsSeen.token}/10 | Time: ${adsSeen.time}/10`;
+      levelStatus.innerHTML = `🏆 Level: ${level} | 💵 $${dollar}`;
     }
-  }
 
-  function loadUserData() {
-    db.ref("users/" + userId + "/progress").once("value").then(snapshot => {
+    function calculateLevel() {
+      let nextThreshold = 1000000;
+      let newLevel = 0, total = balance, reward = 0;
+      while (total >= nextThreshold) {
+        total -= nextThreshold;
+        newLevel++;
+        reward += newLevel;
+        nextThreshold *= 2;
+      }
+      if (newLevel > level) {
+        dollar = reward;
+        level = newLevel;
+      }
+    }
+
+    function boost(type) {
+      window.open("https://your-ad-link.com", "_blank");
+      adsSeen[type]++;
+      if (adsSeen[type] >= 10) {
+        if (type === 'token') tokenBoost++;
+        else timeBoost += 10;
+        adsSeen[type] = 0;
+      }
+      updateUI();
+      saveData();
+    }
+
+    async function loadData() {
+      const snapshot = await get(child(ref(db), 'users/' + userId));
       if (snapshot.exists()) {
         const data = snapshot.val();
-        bdn = data.bdn || 0;
-        usdt = data.usdt || 0;
-        level = data.level || 1;
-        adsWatched = data.adsWatched || 0;
-        lastBonus = data.lastBonus || 0;
-        updateDisplay();
+        balance = data.balance || 0;
+        lastClaim = data.lastClaim || 0;
+        tokenBoost = data.tokenBoost || 0;
+        timeBoost = data.timeBoost || 0;
+        adsSeen = data.adsSeen || { token: 0, time: 0 };
+        level = data.level || 0;
+        dollar = data.dollar || 0;
+        updateUI();
       }
-      updateBonusTimer();
-      setInterval(updateBonusTimer, 60000);
+    }
+
+    function saveData() {
+      set(ref(db, 'users/' + userId), {
+        balance, lastClaim, tokenBoost, timeBoost, adsSeen, level, dollar
+      });
+    }
+
+    document.getElementById("claimBtn").addEventListener("click", () => {
+      const now = Date.now();
+      const waitTime = 3600000 - timeBoost * 60000;
+      if (now - lastClaim >= waitTime) {
+        window.open("https://your-ad-link.com", "_blank");
+        const reward = 100 + tokenBoost;
+        balance += reward;
+        lastClaim = now;
+        calculateLevel();
+        updateUI();
+        saveData();
+        alert(`✅ Claimed ${reward} BDN!`);
+      } else {
+        const mins = Math.ceil((waitTime - (now - lastClaim)) / 60000);
+        alert("⏳ Wait " + mins + " minutes to claim again.");
+      }
     });
-  }
 
-  loadUserData();
-</script>
-
+    loadData();
+  </script>
 </body>
   </html>
-  
