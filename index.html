@@ -1,12 +1,13 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>BitDeen</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BitDeen - Home</title>
   <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      margin: 0;
       font-family: 'Segoe UI', sans-serif;
       background: #0f1318;
       color: #fff;
@@ -14,258 +15,275 @@
       flex-direction: column;
       height: 100vh;
     }
-    .top {
+
+    .top-bar {
+      height: 10%;
       background: #161d25;
-      padding: 10px 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      padding: 0 16px;
     }
-    .profile {
+
+    .top-bar .profile {
       display: flex;
       align-items: center;
+      gap: 10px;
     }
-    .profile img {
+
+    .top-bar .profile img {
       width: 40px;
       height: 40px;
       border-radius: 50%;
-      border: 2px solid #00d2ff;
-      margin-right: 10px;
+      border: 2px solid #00ffc8;
     }
-    .balance {
-      background: #00ffc8;
-      padding: 8px 15px;
-      border-radius: 10px;
-      color: #000;
+
+    .top-bar .diamond {
+      background: #ffd700;
+      padding: 6px 12px;
+      border-radius: 12px;
       font-weight: bold;
+      color: #000;
     }
+
     .middle {
+      height: 80%;
       text-align: center;
-      flex: 1;
-      padding: 20px 10px 0;
-      position: relative;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 10px;
     }
-    .floating-ad {
-      position: absolute;
-      top: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #ffe600;
-      color: #000;
-      padding: 6px 14px;
-      border-radius: 8px;
-      font-size: 0.85rem;
+
+    .level-box {
+      background: #1f2b37;
+      padding: 10px;
+      border-radius: 12px;
+    }
+
+    .bdn-balance {
+      font-size: 1.5rem;
       font-weight: bold;
-      animation: fadeOut 15s forwards;
-      z-index: 10;
+      margin-top: 10px;
     }
-    @keyframes fadeOut {
-      0% { opacity: 1; }
-      90% { opacity: 1; }
-      100% { opacity: 0; display: none; }
-    }
-    .level {
-      font-size: 1rem;
-      font-weight: bold;
-      color: #00ffc8;
-      margin-bottom: 50px;
-    }
+
     .logo {
-      width: 120px;
-      height: 120px;
-      margin: 10px auto 10px;
+      width: 100px;
+      height: 100px;
+      margin: 10px auto;
       border-radius: 50%;
       overflow: hidden;
-      box-shadow: 0 0 300px #00d2ff;
+      box-shadow: 0 0 20px #00ffc8;
     }
+
     .logo img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      border-radius: 50%;
     }
+
     .claim-btn {
-      width: 50%;
       background: #00ffc8;
-      color: #000;
-      font-size: 1rem;
-      padding: 10px;
       border: none;
-      border-radius: 12px;
+      color: #000;
       font-weight: bold;
-      box-shadow: 0 0 8px #00ffc8;
+      padding: 12px;
       margin: 10px auto;
+      border-radius: 10px;
+      font-size: 1rem;
+      width: 60%;
+      box-shadow: 0 0 10px #00ffc8;
     }
-    .boost-buttons {
+
+    .boost-bar {
       display: flex;
-      gap: 8px;
       justify-content: center;
-      margin-top: 8px;
+      gap: 10px;
     }
+
     .boost-btn {
       flex: 1;
-      max-width: 140px;
+      padding: 10px;
       background: #ffd700;
       color: #000;
-      padding: 10px;
-      border-radius: 10px;
+      border-radius: 8px;
       font-weight: bold;
       border: none;
-      font-size: 0.9rem;
-      box-shadow: 0 0 6px #ffd700;
+      max-width: 120px;
     }
-    .boost-info {
-      font-size: 0.8rem;
-      color: #ccc;
-      margin-top: 10px;
-    }
-    .bottom {
-      margin-top: 0px;
+
+    .bottom-bar {
+      height: 10%;
+      background: #161d25;
       display: flex;
       justify-content: space-around;
       align-items: center;
-      background: #161d25;
-      padding: 10px 0;
-      border-radius: 15px 15px 0 0;
-    }
-    .nav-btn {
-      text-align: center;
-      color: #ddd;
       font-size: 0.8rem;
     }
-    .nav-btn span {
-      font-size: 1.2rem;
+
+    .bottom-bar div {
+      text-align: center;
+      color: #ccc;
+    }
+
+    .bottom-bar span {
+      font-size: 1.4rem;
       display: block;
-      margin-bottom: 2px;
     }
   </style>
 </head>
 <body>
-  <div class="top">
+  <!-- Top Bar -->
+  <div class="top-bar">
     <div class="profile">
-      <img src="https://i.ibb.co/gMDGSYkQ/Elegant-Bit-Deen-Cryptocurrency-Logo.png" />
-      <div><strong>User</strong><br />ID: BDN123</div>
+      <img src="https://i.ibb.co/gMDGSYkQ/Elegant-Bit-Deen-Cryptocurrency-Logo.png" alt="Profile" />
+      <div>User123</div>
     </div>
-    <div class="balance"><span id="balance">0</span> BDN</div>
+    <div class="diamond">💎 <span id="diamond">0</span></div>
   </div>
+
+  <!-- Middle -->
   <div class="middle">
-    <div class="floating-ad">📢 Ad Running... Please Wait</div>
-    <div class="level" id="levelStatus">🏆 Level: 0 | 💵 $0</div>
+    <div class="level-box">
+      🏆 Level: <span id="boostLevel">1</span> | 🔓 Next: <span id="nextUpgrade">1000</span> 💎<br />
+      🎁 +<span id="boostBonus">100</span> BDN | ⏱️ +<span id="boostTime">1</span>h
+    </div>
+    <div class="bdn-balance">BDN Balance: <span id="balance">0</span></div>
     <div class="logo">
       <img src="https://i.ibb.co/gMDGSYkQ/Elegant-Bit-Deen-Cryptocurrency-Logo.png" />
     </div>
-    <button class="claim-btn" id="claimBtn">⛏️ Claim 100 BDN</button>
-    <div class="boost-buttons">
-      <button class="boost-btn" onclick="boost('token')">🪙 Token Boost</button>
-      <button class="boost-btn" onclick="boost('time')">⏱ Time Boost</button>
+    <button class="claim-btn" id="claimBtn">⛏️ Claim BDN</button>
+    <p id="nextClaimTime" style="color: #ccc; font-size: 0.9rem; margin-top: 5px;">
+      ⏳ Next claim in: --
+    </p>
+    <div class="boost-bar">
+      <button class="boost-btn" id="tokenBoostBtn">🪙 Boost</button>
+      <button class="boost-btn" id="timeBoostBtn">⏱ Boost</button>
     </div>
-    <div class="boost-info" id="boostInfo"></div>
-  </div>
-  <div class="bottom">
-    <div class="nav-btn"><span>🏠</span>Home</div>
-    <div class="nav-btn"><span>📋</span>Task</div>
-    <div class="nav-btn"><span>💸</span>Withdraw</div>
-    <div class="nav-btn"><span>👥</span>Refer</div>
   </div>
 
+  <!-- Bottom Navigation -->
+  <div class="bottom-bar">
+    <div><span>🏠</span>Home</div>
+    <div><span>📋</span>Task</div>
+    <div><span>💸</span>Withdraw</div>
+    <div><span>👥</span>Refer</div>
+  </div>
+
+  <!-- Firebase Logic -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+    import { getDatabase, ref, set, get, update, child } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyBxQ4EiH_aTCyJm5_VT0cRSDD97F_ObG1o",
-      authDomain: "bitdeen-a1ebe.firebaseapp.com",
-      databaseURL: "https://bitdeen-a1ebe-default-rtdb.firebaseio.com",
-      projectId: "bitdeen-a1ebe",
-      storageBucket: "bitdeen-a1ebe.appspot.com",
-      messagingSenderId: "957332775205",
-      appId: "1:957332775205:web:e34cc38d4d5282adc43acc"
-    };
+    document.addEventListener("DOMContentLoaded", () => {
+      const firebaseConfig = {
+        apiKey: "AIzaSyBxQ4EiH_aTCyJm5_VT0cRSDD97F_ObG1o",
+        authDomain: "bitdeen-a1ebe.firebaseapp.com",
+        databaseURL: "https://bitdeen-a1ebe-default-rtdb.firebaseio.com",
+        projectId: "bitdeen-a1ebe",
+        storageBucket: "bitdeen-a1ebe.appspot.com",
+        messagingSenderId: "957332775205",
+        appId: "1:957332775205:web:e34cc38d4d5282adc43acc"
+      };
 
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-    const userId = "BDN123";
+      const app = initializeApp(firebaseConfig);
+      const db = getDatabase(app);
+      const userId = "BDN123";
 
-    let balance = 0, lastClaim = 0, tokenBoost = 0, timeBoost = 0, level = 0, dollar = 0;
-    let adsSeen = { token: 0, time: 0 };
+      let balance = 0, diamonds = 0, lastClaim = 0;
+      let boostLevel = 1, boostBonus = 100, boostTime = 1;
+      const baseClaimInterval = 3600000;
 
-    const balanceEl = document.getElementById("balance");
-    const boostInfo = document.getElementById("boostInfo");
-    const levelStatus = document.getElementById("levelStatus");
+      const balanceEl = document.getElementById("balance");
+      const diamondEl = document.getElementById("diamond");
+      const claimBtn = document.getElementById("claimBtn");
+      const boostLevelEl = document.getElementById("boostLevel");
+      const nextUpgradeEl = document.getElementById("nextUpgrade");
+      const boostBonusEl = document.getElementById("boostBonus");
+      const boostTimeEl = document.getElementById("boostTime");
+      const tokenBoostBtn = document.getElementById("tokenBoostBtn");
+      const timeBoostBtn = document.getElementById("timeBoostBtn");
 
-    function updateUI() {
-      balanceEl.textContent = balance;
-      boostInfo.innerHTML = `🪙 Token Boost: ${tokenBoost} | ⏱ Time Boost: ${timeBoost} min<br/>Ads Seen — Token: ${adsSeen.token}/10 | Time: ${adsSeen.time}/10`;
-      levelStatus.innerHTML = `🏆 Level: ${level} | 💵 $${dollar}`;
-    }
-
-    function calculateLevel() {
-      let nextThreshold = 1000000;
-      let newLevel = 0, total = balance, reward = 0;
-      while (total >= nextThreshold) {
-        total -= nextThreshold;
-        newLevel++;
-        reward += newLevel;
-        nextThreshold *= 2;
-      }
-      if (newLevel > level) {
-        dollar = reward;
-        level = newLevel;
-      }
-    }
-
-    function boost(type) {
-      window.open("https://your-ad-link.com", "_blank");
-      adsSeen[type]++;
-      if (adsSeen[type] >= 10) {
-        if (type === 'token') tokenBoost++;
-        else timeBoost += 10;
-        adsSeen[type] = 0;
-      }
-      updateUI();
-      saveData();
-    }
-
-    async function loadData() {
-      const snapshot = await get(child(ref(db), 'users/' + userId));
-      if (snapshot.exists()) {
-        const data = snapshot.val();
-        balance = data.balance || 0;
-        lastClaim = data.lastClaim || 0;
-        tokenBoost = data.tokenBoost || 0;
-        timeBoost = data.timeBoost || 0;
-        adsSeen = data.adsSeen || { token: 0, time: 0 };
-        level = data.level || 0;
-        dollar = data.dollar || 0;
-        updateUI();
-      }
-    }
-
-    function saveData() {
-      set(ref(db, 'users/' + userId), {
-        balance, lastClaim, tokenBoost, timeBoost, adsSeen, level, dollar
-      });
-    }
-
-    document.getElementById("claimBtn").addEventListener("click", () => {
+      function updateClaimTimer() {
       const now = Date.now();
-      const waitTime = 3600000 - timeBoost * 60000;
-      if (now - lastClaim >= waitTime) {
-        window.open("https://your-ad-link.com", "_blank");
-        const reward = 100 + tokenBoost;
-        balance += reward;
-        lastClaim = now;
-        calculateLevel();
-        updateUI();
-        saveData();
-        alert(`✅ Claimed ${reward} BDN!`);
-      } else {
-        const mins = Math.ceil((waitTime - (now - lastClaim)) / 60000);
-        alert("⏳ Wait " + mins + " minutes to claim again.");
+      const claimInterval = baseClaimInterval + (boostTime * 3600000);
+      const remaining = claimInterval - (now - lastClaim);
+      const mins = Math.ceil(remaining / 60000);
+      const timerEl = document.getElementById("nextClaimTime");
+      if (timerEl) {
+        timerEl.textContent = remaining > 0 ? `⏳ Next claim in: ${mins} minutes` : `✅ You can claim now!`;
       }
-    });
+    }
 
-    loadData();
+    function updateBoostUI() {
+        boostLevelEl.textContent = boostLevel;
+        nextUpgradeEl.textContent = boostLevel * 1000;
+        boostBonusEl.textContent = boostBonus;
+        boostTimeEl.textContent = boostTime;
+      }
+
+      async function loadUser() {
+        const snapshot = await get(child(ref(db), `users/${userId}`));
+        if (snapshot.exists()) {
+          const data = snapshot.val();
+          balance = data.balance || 0;
+          diamonds = data.diamonds || 0;
+          lastClaim = data.lastClaim || 0;
+          boostLevel = data.boostLevel || 1;
+          boostBonus = data.boostBonus || 100;
+          boostTime = data.boostTime || 1;
+        }
+        updateUI();
+        updateBoostUI();
+      }
+
+      function updateUI() {
+        updateClaimTimer();
+        balanceEl.textContent = balance;
+        diamondEl.textContent = diamonds;
+      }
+
+      async function claimBDN() {
+        const now = Date.now();
+        const claimInterval = baseClaimInterval + (boostTime * 3600000);
+        if (now - lastClaim >= claimInterval) {
+          balance += boostBonus;
+          lastClaim = now;
+          await update(ref(db, 'users/' + userId), { balance, lastClaim });
+          updateUI();
+          alert(`✅ You claimed ${boostBonus} BDN!`);
+        } else {
+          const wait = Math.ceil((claimInterval - (now - lastClaim)) / 60000);
+          alert(`⏳ Please wait ${wait} more minute(s).`);
+        }
+      }
+
+      async function upgradeBoost(type) {
+        const cost = boostLevel * 1000;
+        if (diamonds < cost) {
+          alert("❌ Not enough 💎 to upgrade.");
+          return;
+        }
+        diamonds -= cost;
+        boostLevel++;
+        if (type === 'token') boostBonus += 100;
+        if (type === 'time') boostTime += 1;
+        await update(ref(db, 'users/' + userId), {
+          diamonds, boostLevel, boostBonus, boostTime
+        });
+        updateUI();
+        updateBoostUI();
+        alert("✅ Boost upgraded!");
+      }
+
+      claimBtn.addEventListener("click", claimBDN);
+      tokenBoostBtn.addEventListener("click", () => upgradeBoost('token'));
+      timeBoostBtn.addEventListener("click", () => upgradeBoost('time'));
+
+      loadUser();
+    });
   </script>
 </body>
-      </html>
+  </html>
+  
