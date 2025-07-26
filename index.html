@@ -2,77 +2,73 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>BitDeen | BDN Airdrop</title>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+  <meta name=viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BitDeen - Home</title>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
     body {
-      background: linear-gradient(to bottom right, #fbe391, #c99f2c);
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to bottom right, #fff5cc, #ffe07d);
       color: #3a2e0b;
-      height: 100vh;
       display: flex;
       flex-direction: column;
+      height: 100vh;
     }
-    header {
+    header, footer {
       height: 10%;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
       background: #f1d46b;
-      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
       font-weight: bold;
-      box-shadow: inset 0 0 8px #fff9d4;
     }
     main {
       height: 80%;
+      text-align: center;
+      background: radial-gradient(#fff9e3, #e0b745);
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      background: radial-gradient(#fff9e3, #e0b745);
-      text-align: center;
-      padding: 10px;
     }
-    #logo {
-      width: 150px;
-      margin-bottom: 15px;
-      filter: drop-shadow(0 0 6px #fff1a5);
-    }
-    #bdn {
-      font-size: 1.3rem;
-      font-weight: bold;
-      margin-bottom: 12px;
-    }
-    #claim-btn {
-      padding: 10px 25px;
-      font-size: 1rem;
-      border-radius: 20px;
-      border: none;
-      background: #fbe391;
-      cursor: pointer;
+    #bdn-balance {
+      font-size: 1.4rem;
       margin-bottom: 10px;
     }
-    .boosts {
-      display: flex;
-      gap: 12px;
+    #logo {
+      width: 130px;
+      height: 130px;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 3px solid gold;
+      background: white;
     }
-    .boost-btn {
-      padding: 8px 14px;
-      border-radius: 20px;
-      background: #ffe97d;
-      border: 2px solid #a47c1b;
+    #claim-btn {
+      margin-top: 15px;
+      padding: 12px 25px;
+      font-size: 1rem;
+      border-radius: 10px;
+      border: none;
+      background: #ffdd57;
       font-weight: bold;
       cursor: pointer;
     }
-    footer {
-      height: 10%;
-      background: #e4c859;
+    #boost-section {
+      margin-top: 20px;
       display: flex;
-      justify-content: space-around;
-      align-items: center;
+      gap: 15px;
+    }
+    .boost-btn {
+      background: #f5c842;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
     }
     .nav-btn {
       background: transparent;
@@ -84,185 +80,116 @@
     #login-box {
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.7);
-      color: white;
+      background: rgba(0,0,0,0.7);
       display: flex;
       justify-content: center;
       align-items: center;
-      z-index: 999;
+      z-index: 1000;
     }
     #login-box button {
-      background: white;
-      color: #1da1f2;
-      font-weight: bold;
-      padding: 12px 20px;
+      padding: 12px 24px;
       border-radius: 8px;
+      font-weight: bold;
+      font-size: 1rem;
+      background: white;
+      color: #1a73e8;
       border: none;
       cursor: pointer;
-    }
-    #airdrop-popup {
-      position: absolute;
-      top: 50px;
-      right: 20px;
-      background: #fff5d4;
-      border: 2px solid #a77c19;
-      padding: 12px 16px;
-      border-radius: 10px;
-      width: 250px;
-      display: none;
-      box-shadow: 0 0 10px rgba(0,0,0,0.2);
-      font-size: 0.9rem;
     }
   </style>
 </head>
 <body>
-<div id="login-box">
-  <button onclick="signIn()">🔐 Login with Twitter</button>
-</div>
-
-<header>
-  <div>💎 Diamonds: <span id="diamond">0</span></div>
-  <button onclick="toggleAirdrop()">🎉 Airdrop</button>
-</header>
-
-<div id="airdrop-popup">
-  <strong>BitDeen Airdrop Event 🎉</strong><br/><br/>
-  BDN tokens will become withdrawable after official Binance listing.<br/><br/>
-  Keep claiming, boosting & collecting diamonds!<br/>
-  The future is golden. ✨
-</div>
-
-<main>
-  <img id="logo" src="https://i.ibb.co/gMDGSYkQ/Elegant-Bit-Deen-Cryptocurrency-Logo.png" />
-  <div id="bdn">BDN: <span id="token">0</span></div>
-  <button id="claim-btn">Claim (01:00:00)</button>
-  <div class="boosts">
-    <button class="boost-btn" onclick="boostTime()">⏱ Boost Time</button>
-    <button class="boost-btn" onclick="boostToken()">💰 Boost Token</button>
+  <div id="login-box">
+    <button onclick="signIn()">🔐 Login with Google</button>
   </div>
-</main>
 
-<footer>
-  <button class="nav-btn">🏠 Home</button>
-  <button class="nav-btn">📋 Tasks</button>
-  <button class="nav-btn">🤝 Referral</button>
-  <button class="nav-btn">👤 Profile</button>
-</footer>
+  <header>
+    <div>💎 Diamonds: <span id="diamond">0</span></div>
+    <div>🎁 Airdrop</div>
+  </header>
 
-<script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyBxQ4EiH_aTCyJm5_VT0cRSDD97F_ObG1o",
-    authDomain: "bitdeen-a1ebe.firebaseapp.com",
-    projectId: "bitdeen-a1ebe",
-    storageBucket: "bitdeen-a1ebe.appspot.com",
-    messagingSenderId: "957332775205",
-    appId: "1:957332775205:web:e34cc38d4d5282adc43acc"
-  };
-  firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
-  const db = firebase.firestore();
+  <main>
+    <div id="bdn-balance">BDN: <span id="bdn">0</span></div>
+    <img id="logo" src="https://i.ibb.co/gMDGSYkQ/Elegant-Bit-Deen-Cryptocurrency-Logo.png" alt="BitDeen Logo" />
+    <button id="claim-btn" onclick="claimToken()">Claim 1 BDN</button>
+    <div id="boost-section">
+      <button class="boost-btn" onclick="boostTime()">⏱ Boost Time</button>
+      <button class="boost-btn" onclick="boostToken()">💰 Boost Token</button>
+    </div>
+  </main>
 
-  let userId = '';
-  let diamonds = 0;
-  let bdn = 0;
-  let claimCooldown = 3600;
-  let tokenPerClaim = 1;
-  let boostTimeCost = 1000;
-  let boostTokenCost = 1000;
-  let interval;
+  <footer>
+    <button class="nav-btn">🏠 Home</button>
+    <button class="nav-btn" onclick="location.href='tasks.html'">📋 Tasks</button>
+    <button class="nav-btn" onclick="location.href='referral_google.html'">🤝 Referral</button>
+    <button class="nav-btn" onclick="location.href='profile.html'">👤 Profile</button>
+  </footer>
 
-  function toggleAirdrop() {
-    const popup = document.getElementById("airdrop-popup");
-    popup.style.display = popup.style.display === "block" ? "none" : "block";
-  }
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBxQ4EiH_aTCyJm5_VT0cRSDD97F_ObG1o",
+      authDomain: "bitdeen-a1ebe.firebaseapp.com",
+      projectId: "bitdeen-a1ebe",
+      storageBucket: "bitdeen-a1ebe.appspot.com",
+      messagingSenderId: "957332775205",
+      appId: "1:957332775205:web:e34cc38d4d5282adc43acc"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
 
-  function updateUI() {
-    document.getElementById("diamond").innerText = diamonds;
-    document.getElementById("token").innerText = bdn;
-  }
+    let userId = "", bdn = 0, diamond = 0;
 
-  function signIn() {
-    const provider = new firebase.auth.TwitterAuthProvider();
-    auth.signInWithPopup(provider).then(result => {
-      userId = result.user.uid;
-      document.getElementById("login-box").style.display = "none";
-      loadData();
-    });
-  }
+    function signIn() {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      auth.signInWithPopup(provider).then(result => {
+        userId = result.user.uid;
+        document.getElementById("login-box").style.display = "none";
+        loadUser();
+      });
+    }
 
-  function loadData() {
-    db.collection("users").doc(userId).get().then(doc => {
-      if (doc.exists) {
-        const data = doc.data();
-        diamonds = data.diamonds || 0;
-        bdn = data.bdn || 0;
+    function loadUser() {
+      db.collection("users").doc(userId).get().then(doc => {
+        if (doc.exists) {
+          bdn = doc.data().bdn || 0;
+          diamond = doc.data().diamonds || 0;
+        }
+        document.getElementById("bdn").innerText = bdn;
+        document.getElementById("diamond").innerText = diamond;
+      });
+    }
+
+    function claimToken() {
+      bdn += 1;
+      db.collection("users").doc(userId).set({ bdn }, { merge: true });
+      document.getElementById("bdn").innerText = bdn;
+      alert("+1 BDN Claimed!");
+    }
+
+    function boostTime() {
+      if (diamond >= 1000) {
+        diamond -= 1000;
+        db.collection("users").doc(userId).set({ diamonds: diamond }, { merge: true });
+        alert("⏱ Time Boosted by 1 Hour!");
       } else {
-        diamonds = 3000;
-        bdn = 0;
+        alert("Not enough diamonds!");
       }
-      updateUI();
-      startTimer();
-    });
-  }
+      document.getElementById("diamond").innerText = diamond;
+    }
 
-  function saveData() {
-    db.collection("users").doc(userId).set({
-      diamonds: diamonds,
-      bdn: bdn
-    });
-  }
-
-  function startTimer() {
-    clearInterval(interval);
-    interval = setInterval(() => {
-      if (claimCooldown > 0) {
-        claimCooldown--;
-        const hrs = String(Math.floor(claimCooldown / 3600)).padStart(2, "0");
-        const min = String(Math.floor((claimCooldown % 3600) / 60)).padStart(2, "0");
-        const sec = String(claimCooldown % 60).padStart(2, "0");
-        document.getElementById("claim-btn").innerText = `Claim (${hrs}:${min}:${sec})`;
-        document.getElementById("claim-btn").disabled = true;
+    function boostToken() {
+      if (diamond >= 1000) {
+        diamond -= 1000;
+        bdn += 1;
+        db.collection("users").doc(userId).set({ diamonds: diamond, bdn }, { merge: true });
+        alert("+1 BDN Boosted!");
       } else {
-        document.getElementById("claim-btn").innerText = "✅ Claim Now";
-        document.getElementById("claim-btn").disabled = false;
+        alert("Not enough diamonds!");
       }
-    }, 1000);
-  }
-
-  document.getElementById("claim-btn").addEventListener("click", () => {
-    if (claimCooldown <= 0) {
-      bdn += tokenPerClaim;
-      claimCooldown = 3600;
-      updateUI();
-      saveData();
-      startTimer();
+      document.getElementById("diamond").innerText = diamond;
+      document.getElementById("bdn").innerText = bdn;
     }
-  });
-
-  function boostTime() {
-    if (diamonds >= boostTimeCost) {
-      diamonds -= boostTimeCost;
-      claimCooldown += 3600;
-      boostTimeCost *= 2;
-      updateUI();
-      saveData();
-    } else {
-      alert("Not enough diamonds!");
-    }
-  }
-
-  function boostToken() {
-    if (diamonds >= boostTokenCost) {
-      diamonds -= boostTokenCost;
-      bdn += tokenPerClaim;
-      boostTokenCost *= 2;
-      updateUI();
-      saveData();
-    } else {
-      alert("Not enough diamonds!");
-    }
-  }
-</script>
+  </script>
 </body>
-  </html>
-  
+      </html>
