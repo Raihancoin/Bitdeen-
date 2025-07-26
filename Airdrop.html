@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BitDeen - Swap & Withdraw</title>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to bottom, #fff5cc, #f6d365);
+      color: #3a2e0b;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+    header, footer {
+      height: 10%;
+      background: #f1d46b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+    main {
+      height: 80%;
+      overflow-y: auto;
+      padding: 20px;
+    }
+    .section {
+      background: #fff9d1;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 20px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    input {
+      padding: 10px;
+      width: 80%;
+      margin: 10px 0;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background: #f5b301;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .nav-btn {
+      background: transparent;
+      border: none;
+      font-size: 1rem;
+      cursor: pointer;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <header>💱 Swap / Withdraw</header>
+
+  <main>
+    <div class="section">
+      <h3>🔐 Connect Wallet</h3>
+      <input type="text" id="walletInput" placeholder="Enter your BEP-20 wallet address" />
+      <button onclick="saveWallet()">Save Wallet</button>
+    </div>
+
+    <div class="section">
+      <h3>🔄 Swap XRRC → RC</h3>
+      <p>You can swap your earned XRRC once RaihanCoin is listed.</p>
+      <button onclick="swapTokens()">Swap Now</button>
+    </div>
+
+    <div class="section">
+      <h3>💸 Withdraw</h3>
+      <p>Withdraw will be enabled once RC is live on Binance.</p>
+      <button onclick="withdrawTokens()">Withdraw</button>
+    </div>
+  </main>
+
+  <footer>
+    <button class="nav-btn" onclick="location.href='index_google_clean.html'">🏠 Home</button>
+    <button class="nav-btn" onclick="location.href='tasks.html'">📋 Tasks</button>
+    <button class="nav-btn" onclick="location.href='referral_google.html'">🤝 Referral</button>
+    <button class="nav-btn" onclick="location.href='profile.html'">👤 Profile</button>
+  </footer>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBxQ4EiH_aTCyJm5_VT0cRSDD97F_ObG1o",
+      authDomain: "bitdeen-a1ebe.firebaseapp.com",
+      projectId: "bitdeen-a1ebe",
+      storageBucket: "bitdeen-a1ebe.appspot.com",
+      messagingSenderId: "957332775205",
+      appId: "1:957332775205:web:e34cc38d4d5282adc43acc"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        const uid = user.uid;
+
+        window.saveWallet = () => {
+          const wallet = document.getElementById("walletInput").value;
+          if (!wallet || wallet.length < 20) {
+            alert("Please enter a valid wallet address");
+            return;
+          }
+          db.collection("users").doc(uid).update({ wallet }).then(() => {
+            alert("✅ Wallet Saved!");
+          });
+        };
+
+        window.swapTokens = () => {
+          db.collection("users").doc(uid).get().then(doc => {
+            const data = doc.data();
+            const xrrc = data?.bdn || 0;
+            const swapped = data?.swapped || false;
+            if (swapped) {
+              alert("❌ Already Swapped!");
+              return;
+            }
+            if (xrrc < 1000) {
+              alert("❌ Minimum 1000 XRRC required to swap");
+              return;
+            }
+            db.collection("users").doc(uid).update({
+              rc: xrrc,
+              bdn: 0,
+              swapped: true
+            }).then(() => {
+              alert("✅ Swapped to RC successfully!");
+            });
+          });
+        };
+
+        window.withdrawTokens = () => {
+          alert("🔒 Withdraw system is not yet active. Please wait for Binance listing.");
+        };
+
+      } else {
+        window.location.href = "index_google_clean.html";
+      }
+    });
+  </script>
+</body>
+  </html>
