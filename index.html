@@ -1,77 +1,311 @@
 <!DOCTYPE html>
-<html>
+<html lang="bn">
 <head>
-  <title>BitDeen | Home</title>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>BitDeen Token Miner</title>
+    <!-- টেলিগ্রামের অফিসিয়াল স্ক্রিপ্ট -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        /* General Styles */
+        :root {
+            --primary-color: #1a1a1a;
+            --secondary-color: #2c2c2c;
+            --accent-color: #f0b90b;
+            --text-color: #ffffff;
+            --dim-text-color: #888888;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--primary-color);
+            color: var(--text-color);
+            overflow: hidden;
+            -webkit-user-select: none; /* Safari */
+            -ms-user-select: none; /* IE 10+ */
+            user-select: none;
+        }
+
+        /* Loading Overlay */
+        #loading-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.9); display: flex;
+            justify-content: center; align-items: center; z-index: 1000;
+        }
+
+        /* App Container */
+        #app-container {
+            display: flex; /* শুরুতে ফ্লেক্স থাকবে */
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        /* আগের সকল CSS এখানে অপরিবর্তিত থাকবে... */
+        .header { flex: 0 0 10%; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; background-color: var(--secondary-color); border-bottom: 1px solid var(--dim-text-color); }
+        .balance, .airdrop { display: flex; align-items: center; font-size: 16px; }
+        .balance img { width: 24px; margin-right: 8px; }
+        .airdrop-button { padding: 8px 16px; background-color: var(--accent-color); color: var(--primary-color); border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .main-content { flex: 1; position: relative; overflow-y: auto; }
+        .page { display: none; padding: 20px; text-align: center; animation: fadeIn 0.5s; }
+        .page.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .token-title { font-size: 28px; font-weight: bold; margin-top: 20px; }
+        .logo-container { margin: 20px 0; }
+        .logo { width: 150px; height: 150px; margin: auto; }
+        .logo img { width: 100%; height: 100%; border-radius: 50%; border: 5px solid white; box-shadow: 0 0 20px rgba(240, 185, 11, 0.7); }
+        .claim-section { margin-top: 20px; }
+        .claim-button { width: 80%; padding: 20px; font-size: 22px; font-weight: bold; border: none; border-radius: 15px; cursor: pointer; background-color: var(--accent-color); color: var(--primary-color); transition: background-color 0.3s; }
+        .claim-button:disabled { background-color: var(--dim-text-color); color: #b0b0b0; cursor: not-allowed; }
+        .boost-section { margin-top: 40px; display: flex; justify-content: space-around; }
+        .boost-card { background-color: var(--secondary-color); padding: 15px; border-radius: 12px; width: 40%; text-align: center; }
+        .boost-card h4 { margin-top: 0; }
+        .boost-button { width: 100%; padding: 10px; font-size: 14px; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; background-color: #3f51b5; color: white; }
+        .footer { flex: 0 0 10%; display: flex; justify-content: space-around; align-items: center; background-color: var(--secondary-color); border-top: 1px solid var(--dim-text-color); }
+        .nav-button { background: none; border: none; color: var(--dim-text-color); cursor: pointer; font-size: 14px; text-align: center; flex-grow: 1; }
+        .nav-button.active { color: var(--accent-color); font-weight: bold; }
+    </style>
 </head>
-<body style="font-family:sans-serif;background:#fff8dc;padding:20px;">
-  <h2>🔥 BitDeen - Secure Realtime DB</h2>
-  <div id="auth">
-    <button onclick="signIn()">🔐 Login with Google</button>
-  </div>
-  <div id="content" style="display:none;">
-    <p><strong>Wallet:</strong> <input id="walletInput" placeholder="Enter Wallet Address" style="width:300px;" /></p>
-    <p><strong>BDN:</strong> <span id="bdnBalance">0</span> <button onclick="claimToken()">+1 Claim</button></p>
-    <button onclick="saveWallet()">💾 Save Wallet</button>
-  </div>
+<body>
 
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyBxQ4EiH_aTCyJm5_VT0cRSDD97F_ObG1o",
-      authDomain: "bitdeen-a1ebe.firebaseapp.com",
-      databaseURL: "https://bitdeen-a1ebe-default-rtdb.firebaseio.com",
-      projectId: "bitdeen-a1ebe",
-      storageBucket: "bitdeen-a1ebe.appspot.com",
-      messagingSenderId: "957332775205",
-      appId: "1:957332775205:web:e34cc38d4d5282adc43acc"
-    };
+    <!-- Loading Screen -->
+    <div id="loading-overlay">
+        <p>Loading Your Profile...</p>
+    </div>
+    
+    <!-- Main App Structure -->
+    <div id="app-container" style="display:none;"> <!-- শুরুতে مخفی থাকবে -->
+        <!-- Header -->
+        <header class="header">
+            <div class="balance">
+                <img src="https://i.ibb.co/L8yPScj/diamond.png" alt="Diamond">
+                <span id="diamond-balance">0</span>
+            </div>
+            <div class="airdrop">
+                <button class="airdrop-button" id="airdrop-btn">Airdrop</button>
+            </div>
+        </header>
 
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const db = firebase.database();
-    let currentUser = null;
+        <!-- Main Content -->
+        <main class="main-content">
+            <div id="home-page" class="page active">
+                <div class="token-title">BitDeen TOKEN</div>
+                <div class="logo-container">
+                    <div class="logo">
+                        <img src="https://i.ibb.co/gMDGSYk/Elegant-Bit-Deen-Cryptocurrency-Logo.png" alt="BitDeen Logo">
+                    </div>
+                </div>
+                <div id="token-balance-display" style="font-size: 24px; font-weight: bold;">
+                    <span id="btn-token-balance">0</span> BTN
+                </div>
+                <div class="claim-section">
+                    <button id="claim-button" class="claim-button">Claim</button>
+                </div>
+                <div class="boost-section">
+                    <div class="boost-card">
+                        <h4>Token Boost</h4>
+                        <p>Get 1 BTN Instantly</p>
+                        <button class="boost-button" id="token-boost-btn">Boost (1000 💎)</button>
+                    </div>
+                    <div class="boost-card">
+                        <h4>Time Boost</h4>
+                        <p>Skip 1 Hour Wait</p>
+                        <button class="boost-button" id="time-boost-btn">Boost (1000 💎)</button>
+                    </div>
+                </div>
+            </div>
+            <div id="tasks-page" class="page"><h2>Tasks</h2><p>টাস্ক সম্পন্ন করে ডায়মন্ড অর্জন করুন।</p></div>
+            <div id="referral-page" class="page"><h2>Referrals</h2><p>আপনার বন্ধুদের আমন্ত্রণ জানান।</p></div>
+            <div id="profile-page" class="page">
+                <h2>Profile</h2>
+                <p id="user-info">User ID: </p>
+            </div>
+        </main>
 
-    function signIn() {
-      const provider = new firebase.auth.GoogleAuthProvider();
-      auth.signInWithPopup(provider);
-    }
+        <!-- Footer -->
+        <footer class="footer">
+            <button class="nav-button active" data-page="home-page">Home</button>
+            <button class="nav-button" data-page="tasks-page">Tasks</button>
+            <button class="nav-button" data-page="referral-page">Referral</button>
+            <button class="nav-button" data-page="profile-page">Profile</button>
+        </footer>
+    </div>
 
-    auth.onAuthStateChanged(user => {
-      if (user) {
-        currentUser = user;
-        document.getElementById("auth").style.display = "none";
-        document.getElementById("content").style.display = "block";
-        loadUserData();
-      }
-    });
+    <!-- Firebase SDKs (Compat version for simplicity) -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
 
-    function loadUserData() {
-      const ref = db.ref("users/" + currentUser.uid);
-      ref.once("value").then(snapshot => {
-        const data = snapshot.val() || {};
-        document.getElementById("walletInput").value = data.wallet || "";
-        document.getElementById("bdnBalance").innerText = data.bdn || 0;
-      });
-    }
+    <script>
+        // --- START: FIREBASE CONFIGURATION ---
+        // আপনার Firebase প্রজেক্টের তথ্য এখানে বসানো আছে
+        const firebaseConfig = {
+            apiKey: "AIzaSyBxQ4EiH_aTCyJm5_VT0cRSDD97F_ObG1o", // অনুগ্রহ করে আপনার নতুন API Key ব্যবহার করুন
+            authDomain: "bitdeen-a1ebe.firebaseapp.com",
+            projectId: "bitdeen-a1ebe",
+            storageBucket: "bitdeen-a1ebe.appspot.com",
+            messagingSenderId: "957332775205",
+            appId: "1:957332775205:web:e34cc38d4d5282adc43acc",
+            databaseURL: "https://bitdeen-a1ebe-default-rtdb.firebaseio.com"
+        };
+        // --- END: FIREBASE CONFIGURATION ---
 
-    function saveWallet() {
-      const wallet = document.getElementById("walletInput").value;
-      db.ref("users/" + currentUser.uid + "/wallet").set(wallet).then(() => {
-        alert("✅ Wallet Saved!");
-      });
-    }
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
 
-    function claimToken() {
-      const ref = db.ref("users/" + currentUser.uid + "/bdn");
-      ref.once("value").then(snapshot => {
-        const current = snapshot.val() || 0;
-        ref.set(current + 1);
-        document.getElementById("bdnBalance").innerText = current + 1;
-        alert("✅ You claimed +1 BDN!");
-      });
-    }
-  </script>
+        // DOM Elements
+        const loadingOverlay = document.getElementById('loading-overlay');
+        const appContainer = document.getElementById('app-container');
+        const diamondBalanceEl = document.getElementById('diamond-balance');
+        const btnTokenBalanceEl = document.getElementById('btn-token-balance');
+        const claimButton = document.getElementById('claim-button');
+        const navButtons = document.querySelectorAll('.nav-button');
+        const pages = document.querySelectorAll('.page');
+        const userInfoEl = document.getElementById('user-info');
+        const tokenBoostBtn = document.getElementById('token-boost-btn');
+        const timeBoostBtn = document.getElementById('time-boost-btn');
+
+        // App State
+        let tgUser = null;
+        let userData = {};
+        let claimTimerInterval = null;
+        const CLAIM_COOLDOWN = 3600 * 1000; // 1 hour in milliseconds
+
+        // --- MAIN APP LOGIC ---
+        window.onload = function() {
+            // টেলিগ্রাম অ্যাপটি প্রস্তুত কি না তা নিশ্চিত করুন
+            Telegram.WebApp.ready();
+            
+            // টেলিগ্রাম থেকে ব্যবহারকারীর তথ্য নিন
+            tgUser = Telegram.WebApp.initDataUnsafe.user;
+
+            if (tgUser && tgUser.id) {
+                // যদি ব্যবহারকারী পাওয়া যায়, তার প্রোফাইল লোড করুন
+                loadUserData(tgUser.id.toString());
+            } else {
+                // টেলিগ্রামের বাইরে থেকে খোলা হলে এরর দেখান
+                loadingOverlay.innerHTML = "<p>Please open this app inside Telegram.</p>";
+                console.error("Telegram user data not found.");
+            }
+        };
+
+        // --- DATABASE & USER DATA ---
+        function loadUserData(userId) {
+            const userRef = db.ref('users/' + userId);
+            userRef.on('value', (snapshot) => {
+                if (snapshot.exists()) {
+                    userData = snapshot.val();
+                } else {
+                    // যদি ব্যবহারকারী নতুন হয়, তার জন্য ডাটাবেসে প্রোফাইল তৈরি করুন
+                    userData = {
+                        uid: userId,
+                        first_name: tgUser.first_name,
+                        last_name: tgUser.last_name || '',
+                        username: tgUser.username || '',
+                        diamonds: 0,
+                        btn_tokens: 0,
+                        last_claim_timestamp: 0
+                    };
+                    userRef.set(userData);
+                }
+                
+                // প্রোফাইল লোড হওয়ার পর অ্যাপটি দেখান
+                loadingOverlay.style.display = 'none';
+                appContainer.style.display = 'flex';
+                
+                userInfoEl.textContent = `User ID: ${userData.uid}`;
+                updateUI();
+                initializeClaimTimer();
+            });
+        }
+        
+        function updateUserData() {
+            if (!tgUser) return;
+            db.ref('users/' + tgUser.id).set(userData);
+        }
+
+        // --- UI & NAVIGATION (অপরিবর্তিত) ---
+        function updateUI() {
+            diamondBalanceEl.textContent = userData.diamonds || 0;
+            btnTokenBalanceEl.textContent = userData.btn_tokens || 0;
+        }
+
+        navButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const targetPageId = button.dataset.page;
+                pages.forEach(page => page.classList.remove('active'));
+                document.getElementById(targetPageId).classList.add('active');
+                navButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+            });
+        });
+
+        // --- CLAIMING LOGIC (অপরিবর্তিত) ---
+        function initializeClaimTimer() {
+            if (claimTimerInterval) clearInterval(claimTimerInterval);
+            const now = Date.now();
+            const lastClaim = userData.last_claim_timestamp || 0;
+            const timeSinceLastClaim = now - lastClaim;
+
+            if (timeSinceLastClaim >= CLAIM_COOLDOWN) {
+                claimButton.disabled = false;
+                claimButton.textContent = "Claim 1 BTN";
+            } else {
+                claimButton.disabled = true;
+                let remainingTime = CLAIM_COOLDOWN - timeSinceLastClaim;
+                claimTimerInterval = setInterval(() => {
+                    remainingTime -= 1000;
+                    if (remainingTime <= 0) {
+                        clearInterval(claimTimerInterval);
+                        claimButton.disabled = false;
+                        claimButton.textContent = "Claim 1 BTN";
+                    } else {
+                        const hours = Math.floor((remainingTime / (1000 * 60 * 60)) % 24).toString().padStart(2, '0');
+                        const minutes = Math.floor((remainingTime / (1000 * 60)) % 60).toString().padStart(2, '0');
+                        const seconds = Math.floor((remainingTime / 1000) % 60).toString().padStart(2, '0');
+                        claimButton.textContent = `${hours}:${minutes}:${seconds}`;
+                    }
+                }, 1000);
+            }
+        }
+
+        claimButton.addEventListener('click', () => {
+            const now = Date.now();
+            if (now - (userData.last_claim_timestamp || 0) < CLAIM_COOLDOWN) {
+                alert("It's not time to claim yet!");
+                return;
+            }
+            userData.btn_tokens = (userData.btn_tokens || 0) + 1;
+            userData.last_claim_timestamp = now;
+            updateUserData();
+        });
+        
+        // --- BOOST LOGIC (অপরিবর্তিত) ---
+        tokenBoostBtn.addEventListener('click', () => {
+            if ((userData.diamonds || 0) >= 1000) {
+                userData.diamonds -= 1000;
+                userData.btn_tokens = (userData.btn_tokens || 0) + 1;
+                updateUserData();
+                alert("Success! You got 1 BTN token.");
+            } else {
+                alert("Not enough diamonds! Complete tasks to earn more.");
+            }
+        });
+        
+        timeBoostBtn.addEventListener('click', () => {
+             if ((userData.diamonds || 0) >= 1000) {
+                userData.diamonds -= 1000;
+                userData.last_claim_timestamp = 0;
+                updateUserData();
+                alert("Success! You can now claim immediately.");
+            } else {
+                alert("Not enough diamonds! Complete tasks to earn more.");
+            }
+        });
+
+    </script>
 </body>
-</html>
+                      </html>
