@@ -1,88 +1,134 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>BitDeen - Profile</title>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
   <style>
-    body { margin: 0; font-family: 'Segoe UI', sans-serif; background: #fffbe7; padding-bottom: 80px; }
-    header { background: linear-gradient(135deg, #ffd700, #ffb300); padding: 20px; text-align: center; font-size: 24px; font-weight: bold; color: #333; }
-    .form-container { padding: 20px; max-width: 400px; margin: auto; }
-    label { display: block; margin: 10px 0 5px; font-weight: 600; }
-    input { width: 100%; padding: 10px; border: 1px solid #aaa; border-radius: 5px; margin-bottom: 10px; }
-    button { background: #28a745; color: white; padding: 12px; border: none; width: 100%; border-radius: 6px; font-size: 16px; cursor: pointer; }
-    nav { position: fixed; bottom: 0; left: 0; right: 0; background: #ffd700; display: flex; justify-content: space-around; padding: 12px 0; }
-    nav a { color: #000; text-decoration: none; font-weight: bold; text-align: center; }
-    nav a span { display: block; font-size: 22px; }
-    .msg { text-align: center; font-size: 14px; margin-top: 10px; color: green; }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to bottom, #fff5cc, #f6d365);
+      color: #3a2e0b;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+    header, footer {
+      height: 10%;
+      background: #f1d46b;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      font-weight: bold;
+    }
+    main {
+      height: 80%;
+      padding: 20px;
+      overflow-y: auto;
+    }
+    .section {
+      background: #fff9d1;
+      margin-bottom: 15px;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .section h3 {
+      margin-top: 0;
+    }
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+    }
   </style>
 </head>
 <body>
+  <header>
+    <div>👤 Profile</div>
+    <div>💎 Diamonds: <span id="diamond">0</span></div>
+  </header>
 
-<header>👤 My Profile</header>
+  <main>
+    <div class="section">
+      <h3>🎁 Join Bonus</h3>
+      <div class="info-row"><span>Claimed:</span><span id="bonus-status">Yes</span></div>
+    </div>
 
-<div class="form-container">
-  <label for="name">Full Name</label>
-  <input type="text" id="name" placeholder="Your Name">
-  <label for="email">Email</label>
-  <input type="email" id="email" placeholder="you@example.com">
-  <label for="phone">Phone Number</label>
-  <input type="tel" id="phone" placeholder="+880...">
-  <label for="wallet">Wallet Address</label>
-  <input type="text" id="wallet" placeholder="TRC20 / BEP20 Address">
-  <button onclick="saveProfile()">Save Profile</button>
-  <div class="msg" id="msg"></div>
-</div>
+    <div class="section">
+      <h3>📊 Token Level</h3>
+      <div class="info-row"><span>Total Tokens:</span><span id="bdn">0</span></div>
+      <div class="info-row"><span>Level:</span><span id="level">Level 1</span></div>
+    </div>
 
-<nav>
-  <a href="index.html"><span>🏠</span>Home</a>
-  <a href="tasks.html"><span>📝</span>Tasks</a>
-  <a href="withdraw.html"><span>💸</span>Withdraw</a>
-  <a href="referral.html"><span>🔗</span>Referral</a>
-  <a href="profile.html"><span>👤</span>Profile</a>
-</nav>
+    <div class="section">
+      <h3>📂 Earn Breakdown</h3>
+      <div class="info-row"><span>Tap-mined Tokens:</span><span id="tap-earned">0</span></div>
+      <div class="info-row"><span>Task Tokens:</span><span id="task-earned">0</span></div>
+    </div>
+  </main>
 
-<script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyA-EXAMPLE-NcVmz2",
-    authDomain: "deencoin-project.firebaseapp.com",
-    projectId: "deencoin-project",
-    storageBucket: "deencoin-project.appspot.com",
-    messagingSenderId: "1234567890",
-    appId: "1:1234567890:web:abc123xyz789"
-  };
+  <footer>
+    <button onclick="location.href='index_google_clean.html'">🏠 Home</button>
+    <button onclick="location.href='tasks.html'">📋 Tasks</button>
+    <button onclick="location.href='referral_google.html'">🤝 Referral</button>
+    <button onclick="location.href='profile.html'">👤 Profile</button>
+  </footer>
 
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.database();
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBxQ4EiH_aTCyJm5_VT0cRSDD97F_ObG1o",
+      authDomain: "bitdeen-a1ebe.firebaseapp.com",
+      projectId: "bitdeen-a1ebe",
+      storageBucket: "bitdeen-a1ebe.appspot.com",
+      messagingSenderId: "957332775205",
+      appId: "1:957332775205:web:e34cc38d4d5282adc43acc"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
 
-  function saveProfile() {
-    const name = document.getElementById("name").value.trim();
-    const email = document.getElementById("email").value.trim();
-    const phone = document.getElementById("phone").value.trim();
-    const wallet = document.getElementById("wallet").value.trim();
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        const uid = user.uid;
+        db.collection("users").doc(uid).get().then(doc => {
+          if (doc.exists) {
+            const data = doc.data();
+            const bdn = data.bdn || 0;
+            const diamond = data.diamonds || 0;
+            const tapEarned = data.tapEarned || 0;
+            const taskEarned = data.taskEarned || 0;
 
-    if (!name || !email || !phone || !wallet) {
-      alert("Please fill all fields.");
-      return;
-    }
+            document.getElementById("bdn").innerText = bdn;
+            document.getElementById("diamond").innerText = diamond;
+            document.getElementById("tap-earned").innerText = tapEarned;
+            document.getElementById("task-earned").innerText = taskEarned;
 
-    const userId = phone; // You can change this to generate unique ID
-
-    db.ref("users/" + userId).set({
-      name: name,
-      email: email,
-      phone: phone,
-      wallet: wallet
-    }).then(() => {
-      document.getElementById("msg").innerText = "✅ Profile saved to Firebase!";
-    }).catch((error) => {
-      alert("Error: " + error.message);
+            let level = 1;
+            if (bdn >= 1000000) level = 2;
+            if (bdn >= 2000000) level = 3;
+            if (bdn >= 4000000) level = 4;
+            if (bdn >= 8000000) level = 5;
+            if (bdn >= 16000000) level = 6;
+            if (bdn >= 32000000) level = 7;
+            if (bdn >= 64000000) level = 8;
+            if (bdn >= 128000000) level = 9;
+            if (bdn >= 256000000) level = 10;
+            if (bdn >= 512000000) level = 11;
+            if (bdn >= 1024000000) level = 12;
+            document.getElementById("level").innerText = "Level " + level;
+          }
+        });
+      } else {
+        window.location.href = "index_google_clean.html";
+      }
     });
-  }
-</script>
-
+  </script>
 </body>
-  </html>
-    
+</html>
